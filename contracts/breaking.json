@@ -1,0 +1,16 @@
+{
+  "tools": [
+    {
+      "name": "lookup_note",
+      "description": "Read one note from an in-memory dictionary.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "note_id": {"type": "string"},
+          "workspace": {"type": "string"}
+        },
+        "required": ["note_id", "workspace"]
+      }
+    }
+  ]
+}
