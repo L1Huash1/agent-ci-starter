@@ -1,0 +1,3 @@
+# Reviewed GitHub source revisions; no PyPI publication is assumed.
+mcp-changecheck @ git+https://github.com/L1Huash1/mcp-changecheck.git@c153ee930ff504997266e9485dd8dcf214d82c55
+agent-tracecheck @ git+https://github.com/L1Huash1/agent-tracecheck.git@fcf840f4037d3053a28d5ee222b661c29ebd1bee

@@ -1,0 +1,22 @@
+{
+  "tools": [
+    {
+      "name": "lookup_note",
+      "description": "Read one note from an in-memory dictionary.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {"note_id": {"type": "string"}},
+        "required": ["note_id"]
+      }
+    },
+    {
+      "name": "count_words",
+      "description": "Count words in a local string.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {"text": {"type": "string"}},
+        "required": ["text"]
+      }
+    }
+  ]
+}
