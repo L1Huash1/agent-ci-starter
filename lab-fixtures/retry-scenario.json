@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "tools": [
+    {
+      "name": "lookup_note",
+      "description": "A synthetic fixture: two temporary errors, then one success.",
+      "steps": [
+        {"arguments": {"note_id": "release"}, "status": "error", "error": {"code": "temporary", "message": "Synthetic temporary failure 1"}},
+        {"arguments": {"note_id": "release"}, "status": "error", "error": {"code": "temporary", "message": "Synthetic temporary failure 2"}},
+        {"arguments": {"note_id": "release"}, "status": "ok", "result": {"note_id": "release", "text": "Review interface changes before releasing."}}
+      ]
+    }
+  ]
+}

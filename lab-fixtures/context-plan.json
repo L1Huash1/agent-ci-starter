@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "files": [
+    {"path": "notes/release.md", "priority": 100},
+    {"path": "src/release_notes.py", "priority": 90, "start_line": 1, "end_line": 11}
+  ]
+}
