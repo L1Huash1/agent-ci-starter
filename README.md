@@ -51,14 +51,39 @@ agent-tracecheck retry-trace.jsonl
 
 Use `--fail-on never` with either checker to inspect findings without failing the threshold. Invalid input still returns 2. Deliberate failure examples demonstrate the checkers; they are not model quality or performance benchmarks.
 
+## Optional: context and failure-recovery lab
+
+The optional lab connects [context-budgetpack](https://github.com/L1Huash1/context-budgetpack) and [tool-mockbox](https://github.com/L1Huash1/tool-mockbox) to the same trace recorder. It prepares an explicit context bundle from synthetic notes and code, then calls a scripted tool that fails twice with `temporary` before succeeding on the third attempt. The context is available for review; it is **not sent to a model**.
+
+```sh
+python -m pip install -r requirements-lab.txt
+python lab.py --output lab-output
+```
+
+`requirements-lab.txt` includes the original two dependencies and pins the two new tools to reviewed GitHub commits. Open `lab-output/trace-report.html` to navigate the context report, fixture events, raw trace and checker diagnostics. Use a fresh output path for every run. The lab makes no network requests after installation and uses no model or paid API.
+
+| Artifact | What to inspect |
+| --- | --- |
+| `context/report.html` | Which synthetic notes/code fragments fit the exact 1600-byte context budget |
+| `fixture-run.json` / `.html` | Two scripted failures and one success, including fixture responses |
+| `trace.jsonl` | Original recorder events: three actual fixture calls and their statuses |
+| `trace-report.json` / `.md` | Diagnostics produced by the installed agent-tracecheck CLI |
+| `trace-report.html` | A starter-provided HTML viewer for those diagnostics; no model evaluation |
+| `lab-summary.json` | Attempt count, recovery result, context budget and diagnostic exit status |
+
+The retry policy allows at most three attempts by default (configurable from 1 to 10). Only a known `MockToolError` with code `temporary` is retried. Unknown tools, argument mismatches, exhausted fixtures and other error codes stop the run. A failed fixture run still exports evidence and exits 1; invalid input or file operations exit 2. Files are never overwritten, though a write failure can leave a partial new directory.
+
+The default trace budget explicitly permits the two intended errors and three calls. Retry and repeated-call warnings remain visible, and a successful final response cannot bypass the trace budgets. These thresholds illustrate this specific fixture; choose your own policy for real services. To stop before the scripted recovery, run `python lab.py --output stopped-lab --max-attempts 2` and expect exit 1.
+
 ## Use GitHub checks
 
 Fork or copy this repository and enable its [workflow](.github/workflows/checks.yml). It runs on Windows and Linux:
 
 - `contracts` uses the **released external action** `L1Huash1/mcp-changecheck@v0.3.0` and writes a contract report to the job summary.
 - `local-tools` installs the pinned source tools, runs regression tests, records the local demonstration and enforces call/error budgets. Its report is appended to the job summary.
+- `recovery-lab` installs the optional lab dependencies, runs its end-to-end tests, and exports the synthetic lab reports as downloadable artifacts for 7 days.
 
-The workflow needs `contents: read` only. No repository write permission or API key is required. No reports are posted as comments or uploaded as artifacts automatically.
+The workflow needs `contents: read` only. No repository write permission or API key is required. It uploads only the generated synthetic `lab-output/` directory; no reports are posted as comments.
 
 To adopt it for your own project, replace `contracts/candidate.json` with a complete snapshot of your candidate tool interface and connect the recorder to your tool calls. Review baseline changes deliberately rather than automatically approving the current candidate as the baseline. The snapshots here describe local function interfaces in MCP snapshot shape; they are **not** captured from a running MCP server.
 
@@ -66,7 +91,7 @@ To adopt it for your own project, replace `contracts/candidate.json` with a comp
 python -m unittest discover -s tests -v
 ```
 
-The six regression tests exercise the actual installed CLIs, intentional failure statuses, trace preservation, and the example contract's parameter names. Parameter-name checks are not full runtime schema validation.
+The six original regression tests exercise the actual installed CLIs, intentional failure statuses, trace preservation, and the example contract's parameter names. Eleven optional lab tests cover artifacts, bounded recovery, rejected/permanent errors, budget enforcement and non-overwrite behavior; these skip when lab dependencies are absent. Parameter-name checks are not full runtime schema validation.
 
 ## Limits
 

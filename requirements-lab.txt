@@ -1,0 +1,4 @@
+# Optional scripted recovery lab; includes the original starter dependencies.
+-r requirements.txt
+context-budgetpack @ git+https://github.com/L1Huash1/context-budgetpack.git@571a89a2d565cfcfbd24f0c6958537dbd09530f7
+tool-mockbox @ git+https://github.com/L1Huash1/tool-mockbox.git@37b4b1a586429f6a6a5bb711344866a77080fa66
